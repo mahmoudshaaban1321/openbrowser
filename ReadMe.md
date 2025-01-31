@@ -1,88 +1,249 @@
-Here is a template for the `README.md` file for your project based on the provided Maven `pom.xml` configuration:
+Absolutely! Below is a more professional and polished version of the `README.md` for your project:
 
 ```markdown
-# OpenBrowser Project
+# Invalid Login Automation Test with Cucumber, TestNG, and Selenium WebDriver
 
-This project demonstrates how to set up a Selenium-based automation framework integrated with TestNG, Cucumber, and ExtentReports for running automated tests with detailed reporting.
+## Overview
 
-## Project Setup
+This repository contains an automation framework to test invalid login functionality on a web application. It utilizes **Cucumber** for behavior-driven development (BDD), **TestNG** for test execution, and **Selenium WebDriver** for browser automation. The tests simulate login attempts with incorrect credentials, ensuring the application correctly displays error messages for invalid logins.
+
+---
+
+## Tools and Technologies
+
+The following tools and technologies are used in this project:
+
+- **Programming Language**: Java
+- **Test Framework**: TestNG
+- **Behavior-Driven Development (BDD)**: Cucumber
+- **Browser Automation**: Selenium WebDriver
+- **Reporting**: Extent Reports (optional)
+- **IDE**: IntelliJ IDEA
+- **Build Tool**: Maven
+
+---
+
+## Project Structure
+
+This project is organized into the following main components:
+
+- **Cucumber Feature Files**: Describes the test scenarios in Gherkin syntax.
+- **Step Definitions**: Java code implementing the steps in the feature files.
+- **Page Objects**: Encapsulates the interaction with the web page elements using the Page Object Model (POM) design pattern.
+
+---
+
+## Test Scenarios
+
+### Scenario 1: Valid Login Test
+**Objective**: Verify that the system displays an error message when the user attempts to log in with incorrect credentials.
+
+**Steps**:
+1. Navigate to the automation website.
+2. Click on the **Signup/Login** button.
+3. Enter a valid email (`ali@gmail.com`) and an invalid password (`111111111111111111`).
+4. Click the **Login** button.
+5. Verify that the system displays an appropriate error message.
+
+### Scenario 2: Invalid Login with Scenario Outline
+**Objective**: Validate various invalid login scenarios with different combinations of email addresses and passwords.
+
+**Steps**:
+1. Navigate to the automation website.
+2. Click on the **Signup/Login** button.
+3. For each row in the examples table, enter the provided email and password.
+4. Click the **Login** button.
+5. Verify that the system displays the correct error message for each combination.
+
+---
+
+## Maven Dependencies
+
+Ensure the following dependencies are added to your `pom.xml` file to enable the use of **Selenium**, **Cucumber**, **TestNG**, and other necessary libraries:
+
+```xml
+<dependencies>
+    <!-- Selenium WebDriver -->
+    <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-java</artifactId>
+        <version>4.27.0</version>
+    </dependency>
+    
+    <!-- TestNG for test execution -->
+    <dependency>
+        <groupId>org.testng</groupId>
+        <artifactId>testng</artifactId>
+        <version>7.10.2</version>
+        <scope>test</scope>
+    </dependency>
+    
+    <!-- Cucumber Java bindings -->
+    <dependency>
+        <groupId>io.cucumber</groupId>
+        <artifactId>cucumber-java</artifactId>
+        <version>7.20.1</version>
+    </dependency>
+    
+    <!-- Cucumber TestNG runner -->
+    <dependency>
+        <groupId>io.cucumber</groupId>
+        <artifactId>cucumber-testng</artifactId>
+        <version>7.20.1</version>
+    </dependency>
+    
+    <!-- Extent Reports for reporting -->
+    <dependency>
+        <groupId>tech.grasshopper</groupId>
+        <artifactId>extentreports-cucumber7-adapter</artifactId>
+        <version>1.14.0</version>
+    </dependency>
+</dependencies>
+```
+
+---
+
+## Cucumber Feature File
+
+The **feature file** defines the test scenarios using Gherkin syntax, making the tests human-readable and easy to maintain.
+
+```gherkin
+Feature: User login to automation web
+
+  Scenario: valid login
+    Given user navigate to automation web
+    When user click on Signup or Login button
+    And user Enter email address "ali@gmail.com"
+    And user Enter password "111111111111111111"
+    And user click on login button
+    Then web will show error message
+
+  @smoking
+  Scenario Outline: Invalid login
+    Given user navigate to automation web
+    When user click on Signup or Login button
+    And user Enter email address "<user>"
+    And user Enter password "<password>"
+    And user click on login button
+    Then web will show error message "<message>"
+
+    Examples:
+      | user             | password              | message |
+      | ali@gmail.com    | adsadsada             | xxxxxxxx|
+      | asda@gmail.com   | 111111111111111111    | xxxxxxx |
+      | 2222@gmail.com   | d43d4d4d              | zzzzzzz |
+```
+
+---
+
+## Step Definitions
+
+The **Step Definitions** file implements the Gherkin steps in Java using Selenium WebDriver to interact with the web application.
+
+```java
+package Steps;
+
+import Pages.Login;
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
+import org.testng.Assert;
+
+public class Steps {
+    Login login = new Login();
+
+    @Given("user navigate to automation web")
+    public void user_navigate_to_automation_web() {
+        login.OpenBrowser();
+    }
+
+    @When("user click on Signup or Login button")
+    public void user_click_on_Signup_or_Login_button() throws InterruptedException {
+        login.SignUp_Login_button().click();
+    }
+
+    @And("user Enter email address {string}")
+    public void user_Enter_email_address(String email) throws InterruptedException {
+        login.Email().sendKeys(email);
+    }
+
+    @And("user Enter password {string}")
+    public void user_Enter_password(String password) throws InterruptedException {
+        login.pass().sendKeys(password);
+    }
+
+    @And("user click on login button")
+    public void user_click_on_login_button() throws InterruptedException {
+        login.Login_button().click();
+    }
+
+    @Then("web will show error message {string}")
+    public void web_will_show_error_message(String message) throws InterruptedException {
+        String expected = message;
+        String actual = login.Actual().getText();
+        Assert.assertEquals(actual, expected);
+    }
+}
+```
+
+---
+
+## Running the Tests
 
 ### Prerequisites
 
-Before running this project, ensure you have the following:
+1. **Java 8+**: Ensure you have Java 8 or later installed.
+2. **Maven**: Ensure Maven is installed to manage project dependencies.
+3. **WebDriver**: Download the necessary WebDriver (e.g., **ChromeDriver** for Chrome).
 
-- Java 23 or later
-- Maven 3.x
-- Selenium WebDriver
-- TestNG for unit testing
-- Cucumber for BDD (Behavior-Driven Development)
-- ExtentReports for reporting
+### Steps to Execute Tests
 
-### Clone the Repository
+1. **Clone the repository**:
 
-To get started with the project, clone the repository:
+   ```bash
+   git clone https://github.com/your-username/invalid-login-automation.git
+   ```
 
-```bash
-git clone <your-repository-url>
-cd openbrowser
-```
+2. **Open the project in IntelliJ IDEA**:
+   Open the project directly in **IntelliJ IDEA**. IntelliJ will automatically recognize the Maven configuration and download the necessary dependencies.
 
-### Build and Run the Project
+3. **Build the project with Maven**:
+   In the terminal, navigate to the project folder and run:
 
-To build the project, navigate to the project directory and use Maven to compile and run:
+   ```bash
+   mvn clean install
+   ```
 
-```bash
-mvn clean install
-```
+4. **Run the Tests**:
+   You can execute the tests via the **TestNG** runner. Right-click on the **TestNG XML** file or use the **Run** option in IntelliJ to execute the tests.
 
-### Dependencies
+   Alternatively, run the tests from the terminal using:
 
-The project includes the following dependencies:
+   ```bash
+   mvn test
+   ```
 
-- **Selenium Java (v4.27.0)**: To automate web browsers.
-- **TestNG (v7.10.2)**: For running test cases.
-- **Cucumber Java (v7.20.1)**: To write and run Cucumber feature files for BDD testing.
-- **Cucumber TestNG (v7.20.1)**: Integration of Cucumber with TestNG.
-- **ExtentReports Cucumber Adapter (v1.14.0)**: For generating rich and interactive test reports.
+5. **View Test Results**:
+   After executing the tests, you can view the results in the **TestNG console** or, if integrated, in **Extent Reports** HTML format.
 
-### Project Structure
+---
 
-```
-openbrowser
-├── src
-│   └── test
-│       └── java
-│           ├── steps
-│           ├── tests
-│           └── runner
-├── pom.xml
-```
+## Conclusion
 
-- `src/test/java/steps`: Contains step definitions for Cucumber.
-- `src/test/java/tests`: Contains the test cases and logic for the automated tests.
-- `src/test/java/runner`: Contains the Cucumber test runner files.
+This project provides a comprehensive automation framework to test invalid login scenarios using **Cucumber**, **TestNG**, and **Selenium WebDriver**. It ensures that the web application handles invalid login attempts correctly by displaying the expected error messages.
 
-## Running Tests
+Feel free to customize the feature files, extend test cases, or integrate additional reporting tools as needed.
 
-To execute the tests, run the following command using Maven:
-
-```bash
-mvn test
-```
-
-This will trigger the execution of the Cucumber tests using TestNG.
-
-## Reporting
-
-This project uses **ExtentReports** to generate detailed reports of test execution. Reports will be saved in the `target/extent-report/` folder.
-
-## Customization
-
-You can modify the project to fit your specific needs by adding more test steps, modifying Cucumber feature files, or customizing the reporting format.
+---
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 ```
 
-This `README.md` provides a quick overview of the project setup, dependencies, and running instructions. You can replace `<your-repository-url>` with the actual URL for your project if you're hosting it on GitHub or another version control platform.
+### Key Improvements:
+- **Professional Tone**: The language is clear, formal, and structured.
+- **Detailed Instructions**: Steps for setting up and running the project are more explicit.
+- **Project Structure**: Sections like **Tools and Technologies** and **Project Structure** provide better clarity.
+- **Consistent Formatting**: Improved use of headings, code blocks, and lists for readability.
